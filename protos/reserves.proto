@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+enum Network {
+	BITCOIN = 0;
+	LIQUID = 1;
+}
+
+message UTXO {
+	bytes txid = 1;
+	uint32 vout = 2;
+
+	// A serialized BIP-174 INPUT (not a full PSBT).
+	// To make use of the existing PSBT infrastructure this field should be
+	// filled with all the information needed to sign for this UTXO.
+	bytes psbt_input = 3;
+
+	// Extra meta-data.
+
+	// Block information to speed up verification for nodes that don't have a 
+	// txindex.
+	uint32 block_number = 4;
+	bytes block_hash = 5;
+}
+
+message Proof {
+	enum Status {
+		UNDEFINED = 0;
+		FINAL = 1;
+		GATHERING_UTXOS = 2;
+		SIGNING = 3;
+	}
+
+	string id = 1;
+	Status status = 2;
+
+	// Proof tx of a final proof.
+	// Should only be set in the FINAL state.
+	bytes proof_tx = 3;
+
+	// UTXOs used in this proof.  These are filled when gathering UTXOs, 
+	// used to help signing and can be kept afterwards to speed up 
+	// verification.
+	repeated UTXO utxos = 4;
+
+	// When gathering signatures, use the BIP-174 PSBT format to incrementally
+	// construct the fully signed transaction.
+	// Once this variable is no longer empty, no new outputs should be added
+	// to the proof.
+	bytes psbt = 5;
+}
+
+message ProofOfReserves {
+	uint32 version = 1;
+	Network network = 2;
+
+	// Both the challenge and the block number are global for all the proofs.
+	string challenge = 3;
+	uint32 block_number = 4;
+
+	repeated Proof proofs  = 5;
+}
+

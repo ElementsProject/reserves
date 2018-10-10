@@ -1,0 +1,39 @@
+[package]
+name = "reserves"
+version = "0.1.0"
+authors = ["Steven Roose <steven@stevenroose.org>"]
+
+
+[dependencies.clap]
+version = "2.32"
+
+[dependencies.protobuf]
+version = "2.0.4"
+
+[dependencies.hex]
+version = "0.3.2"
+
+[dependencies.rust-crypto]
+version = "0.2.36"
+
+[dependencies.bitcoin]
+version = "0.14"
+features = [ "serde-decimal" ]
+
+[dependencies.bitcoin-amount]
+version = "0.1.4"
+features = [ "serde" ]
+
+[dependencies.bitcoinconsensus]
+version = "0.16.3"
+
+[dependencies.bitcoindrpc]
+git = "https://github.com/stevenroose/rust-bitcoindrpc.git"
+branch = "master"
+
+
+[patch.crates-io]
+bitcoin = { path = "/home/steven/code/rust/bitcoin" }
+
+[patch."https://github.com/stevenroose/rust-bitcoindrpc.git"]
+bitcoindrpc = { path = "/home/steven/code/rust/bitcoindrpc" }
