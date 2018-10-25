@@ -1,9 +1,12 @@
 extern crate bitcoin as rbitcoin;
+#[macro_use]
+extern crate log;
 extern crate bitcoin_amount;
 extern crate bitcoinconsensus;
 extern crate bitcoindrpc;
 extern crate clap;
 extern crate crypto;
+extern crate fern;
 extern crate hex;
 extern crate protobuf;
 
@@ -19,6 +22,16 @@ mod common;
 mod context;
 mod protos;
 mod utils;
+
+fn setup_logger(lvl: log::LevelFilter) {
+	fern::Dispatch::new()
+		.format(|out, message, record| {
+			out.finish(format_args!("[{}][{}] {}", record.target(), record.level(), message))
+		}).level(lvl)
+		.chain(std::io::stderr())
+		.apply()
+		.expect("error setting up logger");
+}
 
 fn main() {
 	// Apply a custom panic hook to print a more user-friendly message
@@ -42,6 +55,13 @@ fn main() {
 		.setting(AppSettings::SubcommandRequiredElseHelp)
 		.setting(AppSettings::AllArgsOverrideSelf)
 		.arg(
+			Arg::with_name("verbose")
+			.short("v")
+			.multiple(true)
+			.takes_value(false)
+			.help("print verbose logging output to stderr"),
+			)
+		.arg(
 			Arg::with_name("proof-file")
 				.long("proof-file")
 				.short("f")
@@ -58,6 +78,12 @@ fn main() {
 		.subcommand(cmd::drop_utxos::subcommand())
 		.subcommand(cmd::sign::subcommand())
 		.get_matches();
+
+	match matches.occurrences_of("verbose") {
+		0 => setup_logger(log::LevelFilter::Warn),
+		1 => setup_logger(log::LevelFilter::Debug),
+		_ => setup_logger(log::LevelFilter::Trace),
+	}
 
 	let mut ctx = context::Ctx {
 		matches: &matches,

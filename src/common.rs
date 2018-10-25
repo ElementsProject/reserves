@@ -5,6 +5,7 @@ pub use protos::{Network, Proof_Status};
 //TODO(stevenroose) when supporting Liquid, we can make an enum Proof that will hold either
 // a Bitcoin(bitcoin::Proof) or Liquid(liquid::Proof).
 
+#[derive(Debug)]
 pub struct ProofFile {
 	pub version: u32,
 	pub network: Network,

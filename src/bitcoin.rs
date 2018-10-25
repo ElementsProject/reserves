@@ -14,6 +14,7 @@ use protos;
 use utils;
 
 /// An internal type used to represent a transaction output with extra metadata.
+#[derive(Debug)]
 pub struct UTXO {
 	pub point: OutPoint,
 
@@ -96,6 +97,7 @@ pub fn challenge_txin(challenge: &str) -> TxIn {
 	}
 }
 
+#[derive(Debug)]
 pub struct Proof {
 	pub id: String,
 	pub status: Proof_Status,

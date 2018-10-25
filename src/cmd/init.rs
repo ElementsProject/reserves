@@ -41,5 +41,6 @@ pub fn execute(ctx: &mut context::Ctx) {
 		p.block_number = bn.parse().expect("failed to parse block number");
 	}
 
+	debug!("Creating proof file: {:?}", &p);
 	ctx.save_proof_file(p);
 }

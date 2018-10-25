@@ -45,6 +45,7 @@ pub fn execute(ctx: &mut context::Ctx) {
 			continue;
 		}
 
+		debug!("Adding UTXO: {:?}", utxo);
 		proof.utxos.push(utxo);
 	}
 	let added = proof.utxos.len() - len_before;

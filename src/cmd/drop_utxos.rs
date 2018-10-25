@@ -42,7 +42,14 @@ pub fn execute(ctx: &mut context::Ctx) {
 	}
 
 	let nb_before = proof.utxos.len();
-	proof.utxos.retain(|u| !drops.contains(&u.point));
+	proof.utxos.retain(|u| {
+		if drops.contains(&u.point) {
+			debug!("Dropping UTXO: {:?}", u);
+			false
+		} else {
+			true
+		}
+	});
 
 	println!("Dropped {} UTXOs.", nb_before - proof.utxos.len());
 
