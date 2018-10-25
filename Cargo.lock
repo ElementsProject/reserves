@@ -78,6 +78,7 @@ dependencies = [
  "bitcoin-amount 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "hex 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "jsonrpc 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "num-bigint 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "secp256k1 0.11.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.78 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -117,6 +118,14 @@ dependencies = [
  "textwrap 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicode-width 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "vec_map 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "fern"
+version = "0.5.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "log 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -330,7 +339,9 @@ dependencies = [
  "bitcoinconsensus 0.16.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "bitcoindrpc 0.0.0",
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fern 0.5.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "hex 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "protobuf 2.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "rust-crypto 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -551,6 +562,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum cc 1.0.25 (registry+https://github.com/rust-lang/crates.io-index)" = "f159dfd43363c4d08055a07703eb7a3406b0dac4d0584d96965a3262db3c9d16"
 "checksum cfg-if 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = "0c4e7bb64a8ebb0d856483e1e682ea3422f883c5f5615a90d51a2c82fe87fdd3"
 "checksum clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)" = "b957d88f4b6a63b9d70d5f454ac8011819c6efa7727858f458ab71c756ce2d3e"
+"checksum fern 0.5.6 (registry+https://github.com/rust-lang/crates.io-index)" = "57915fe00a83af935983eb2d00b0ecc62419c4741b28c207ecbf98fd4a1b94c8"
 "checksum fuchsia-zircon 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)" = "2e9763c69ebaae630ba35f74888db465e49e259ba1bc0eda7d06f4a067615d82"
 "checksum fuchsia-zircon-sys 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)" = "3dcaa9ae7725d12cdb85b3ad99a434db70b468c09ded17e012d86b5c1010f7a7"
 "checksum gcc 0.3.54 (registry+https://github.com/rust-lang/crates.io-index)" = "5e33ec290da0d127825013597dbdfc28bee4964690c7ce1166cbc2a7bd08b1bb"
