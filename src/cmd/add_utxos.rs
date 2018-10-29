@@ -11,7 +11,7 @@ pub fn subcommand<'a>() -> clap::App<'a, 'a> {
 	clap::SubCommand::with_name("add-utxos")
 		.about("add UTXOs to a proof in preparation to a new or existing proof")
 		.arg(common::id_arg())
-		.args(backend::bitcoind::args().as_slice())
+		.args(&backend::bitcoind::args())
 }
 
 pub fn fetch_utxos(command: &clap::ArgMatches) -> Vec<bitcoin::UTXO> {

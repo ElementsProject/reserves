@@ -54,21 +54,7 @@ fn main() {
 		.about("Proof-of-Reserves generator and verifier")
 		.setting(AppSettings::SubcommandRequiredElseHelp)
 		.setting(AppSettings::AllArgsOverrideSelf)
-		.arg(
-			Arg::with_name("verbose")
-			.short("v")
-			.multiple(true)
-			.takes_value(false)
-			.help("print verbose logging output to stderr"),
-			)
-		.arg(
-			Arg::with_name("proof-file")
-				.long("proof-file")
-				.short("f")
-				.help("the proof-of-reserves file to use")
-				.takes_value(true)
-				.default_value("reserves.proof"),
-		)
+		.args(&context::global_args())
 		.subcommand(cmd::init::subcommand())
 		.subcommand(cmd::inspect::subcommand())
 		.subcommand(cmd::drop::subcommand())
@@ -79,15 +65,15 @@ fn main() {
 		.subcommand(cmd::sign::subcommand())
 		.get_matches();
 
-	match matches.occurrences_of("verbose") {
+	let mut ctx = context::Ctx {
+		matches: &matches,
+	};
+
+	match ctx.verbosity() {
 		0 => setup_logger(log::LevelFilter::Warn),
 		1 => setup_logger(log::LevelFilter::Debug),
 		_ => setup_logger(log::LevelFilter::Trace),
 	}
-
-	let mut ctx = context::Ctx {
-		matches: &matches,
-	};
 
 	// Execute other commands.
 	match matches.subcommand() {

@@ -10,7 +10,7 @@ use context;
 pub fn subcommand<'a>() -> clap::App<'a, 'a> {
 	clap::SubCommand::with_name("verify")
 		.about("verify the proofs in the proof file")
-		.args(backend::bitcoind::args().as_slice())
+		.args(&backend::bitcoind::args())
 }
 
 /// Execute the verify command.

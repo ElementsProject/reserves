@@ -7,6 +7,27 @@ use protobuf::Message;
 use common;
 use protos;
 
+pub fn global_args<'a>() -> Vec<clap::Arg<'a, 'a>> {
+	vec![
+		clap::Arg::with_name("verbose")
+			.short("v")
+			.multiple(true)
+			.takes_value(false)
+			.help("print verbose logging output to stderr"),
+		clap::Arg::with_name("proof-file")
+			.long("proof-file")
+			.short("f")
+			.help("the proof-of-reserves file to use")
+			.takes_value(true)
+			.default_value("reserves.proof"),
+		clap::Arg::with_name("dry-run")
+			.short("n")
+			.long("dry-run")
+			.takes_value(false)
+			.help("perform a dry run: no changes will be made to the proof file"),
+	]
+}
+
 pub struct Ctx<'a> {
 	pub matches: &'a clap::ArgMatches<'a>,
 }
@@ -28,6 +49,10 @@ impl<'a> Ctx<'a> {
 	}
 
 	pub fn save_proof_file(&self, pf: common::ProofFile) {
+		if self.dry_run() {
+			return;
+		}
+
 		let path = self.proof_file_path();
 		let mut file = fs::File::create(path).expect(&format!("error opening file at '{}'", path));
 		let proto: protos::ProofOfReserves = pf.into();
@@ -38,8 +63,16 @@ impl<'a> Ctx<'a> {
 		self.matches.subcommand().1.unwrap()
 	}
 
+	pub fn verbosity(&self) -> usize {
+		self.command().occurrences_of("verbose") as usize
+	}
+
 	pub fn network(&self) -> protos::Network {
 		//TODO(stevenroose) change with --liquid flag or --testnet flag
 		protos::Network::BITCOIN
+	}
+
+	pub fn dry_run(&self) -> bool {
+		self.command().is_present("dry-run")
 	}
 }

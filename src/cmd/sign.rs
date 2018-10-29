@@ -11,7 +11,7 @@ pub fn subcommand<'a>() -> clap::App<'a, 'a> {
 	clap::SubCommand::with_name("sign")
 		.about("sign a proof")
 		.arg(common::id_arg())
-		.args(backend::bitcoind::args().as_slice())
+		.args(&backend::bitcoind::args())
 }
 
 /// Sign the tx with the active backend in the context.
