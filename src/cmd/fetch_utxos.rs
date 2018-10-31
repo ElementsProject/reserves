@@ -6,10 +6,10 @@ use cmd::common;
 use common::*;
 use context;
 
-/// Create the add-utxos subcommand.
+/// Create the fetch-utxos subcommand.
 pub fn subcommand<'a>() -> clap::App<'a, 'a> {
-	clap::SubCommand::with_name("add-utxos")
-		.about("add UTXOs to a proof in preparation to a new or existing proof")
+	clap::SubCommand::with_name("fetch-utxos")
+		.about("fetch UTXOs from a wallet to add to a new or existing proof")
 		.arg(common::id_arg())
 		.args(&backend::bitcoind::args())
 }
@@ -23,7 +23,7 @@ pub fn fetch_utxos(command: &clap::ArgMatches) -> Vec<bitcoin::UTXO> {
 	}
 }
 
-/// Execute the add-utxos command.
+/// Execute the fetch-utxos command.
 pub fn execute(ctx: &mut context::Ctx) {
 	let mut pf = ctx.load_proof_file();
 
