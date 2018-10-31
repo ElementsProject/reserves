@@ -13,7 +13,7 @@ extern crate protobuf;
 use std::panic;
 use std::process;
 
-use clap::{App, AppSettings, Arg};
+use clap::{App, AppSettings};
 
 mod backend;
 mod bitcoin;
@@ -61,6 +61,7 @@ fn main() {
 		//.subcommand(cmd::add_proof::subcommand())
 		.subcommand(cmd::verify::subcommand())
 		.subcommand(cmd::add_utxos::subcommand())
+		.subcommand(cmd::add_proof::subcommand())
 		.subcommand(cmd::drop_utxos::subcommand())
 		.subcommand(cmd::sign::subcommand())
 		.get_matches();
@@ -83,6 +84,7 @@ fn main() {
 		//("add-proof", Some(sub)) => cmd::add_proof::execute(&mut ctx, sub),
 		("verify", _) => cmd::verify::execute(&mut ctx),
 		("add-utxos", _) => cmd::add_utxos::execute(&mut ctx),
+		("add-proof", _) => cmd::add_proof::execute(&mut ctx),
 		("drop-utxos", _) => cmd::drop_utxos::execute(&mut ctx),
 		("sign", _) => cmd::sign::execute(&mut ctx),
 		(c, _) => println!("command {} unknown", c),

@@ -2,6 +2,7 @@
 
 pub mod common;
 
+pub mod add_proof;
 pub mod add_utxos;
 pub mod drop;
 pub mod drop_utxos;
