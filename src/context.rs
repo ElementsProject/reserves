@@ -64,7 +64,7 @@ impl<'a> Ctx<'a> {
 	}
 
 	pub fn verbosity(&self) -> usize {
-		self.command().occurrences_of("verbose") as usize
+		self.matches.occurrences_of("verbose") as usize
 	}
 
 	pub fn network(&self) -> protos::Network {
@@ -73,6 +73,6 @@ impl<'a> Ctx<'a> {
 	}
 
 	pub fn dry_run(&self) -> bool {
-		self.command().is_present("dry-run")
+		self.matches.is_present("dry-run")
 	}
 }

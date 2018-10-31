@@ -28,6 +28,7 @@ fn setup_logger(lvl: log::LevelFilter) {
 		.format(|out, message, record| {
 			out.finish(format_args!("[{}][{}] {}", record.target(), record.level(), message))
 		}).level(lvl)
+		.level_for("hyper", log::LevelFilter::Off)
 		.chain(std::io::stderr())
 		.apply()
 		.expect("error setting up logger");
