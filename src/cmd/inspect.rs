@@ -1,6 +1,6 @@
 use clap;
 use hex;
-use rbitcoin::consensus::encode as btc_encode; //::{serialize, deserialize};
+use rbitcoin::consensus::encode as btc_encode;
 
 use bitcoin;
 use common::*;
@@ -18,7 +18,7 @@ fn print_outputs(pre: &str, proof: &bitcoin::Proof) {
 	for (idx, u) in proof.utxos.iter().enumerate() {
 		println!("{}  outpoint: {}", pre, u.point);
 		println!("{}  value: {:?}", pre, u.value()); //TODO(stevenroose) pretty print
-											   //println!("{}  psbt: {:?}", pre, u.psbt_input); //TODO(stevenroose) print something
+		info!("PSBT input: {:?}", u.psbt_input);
 		println!("{}  block number: {}", pre, u.block_number);
 		println!(
 			"{}  block hash: {}",
@@ -55,7 +55,7 @@ pub fn execute(ctx: &mut context::Ctx) {
 					proof.proof_tx.as_ref().unwrap().output.iter().fold(0, |a, o| a + o.value);
 				println!("  amount: {} satoshis", amount);
 				println!("  raw proof tx: {}", hex::encode(btc_encode::serialize(&proof.proof_tx)));
-				//TODO(stevenroose) perhaps deserialized
+				info!("decoded proof tx: {:?}", proof.proof_tx);
 				print_outputs("  ", &proof);
 			}
 			Proof_Status::GATHERING_UTXOS => {
