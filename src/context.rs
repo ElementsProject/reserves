@@ -13,18 +13,21 @@ pub fn global_args<'a>() -> Vec<clap::Arg<'a, 'a>> {
 			.short("v")
 			.multiple(true)
 			.takes_value(false)
-			.help("print verbose logging output to stderr"),
+			.help("print verbose logging output to stderr")
+			.global(true),
 		clap::Arg::with_name("proof-file")
 			.long("proof-file")
 			.short("f")
 			.help("the proof-of-reserves file to use")
 			.takes_value(true)
-			.default_value("reserves.proof"),
+			.default_value("reserves.proof")
+			.global(true),
 		clap::Arg::with_name("dry-run")
 			.short("n")
 			.long("dry-run")
 			.takes_value(false)
-			.help("perform a dry run: no changes will be made to the proof file"),
+			.help("perform a dry run: no changes will be made to the proof file")
+			.global(true),
 	]
 }
 
@@ -50,6 +53,7 @@ impl<'a> Ctx<'a> {
 
 	pub fn save_proof_file(&self, pf: common::ProofFile) {
 		if self.dry_run() {
+			println!("Dry-run: not writing proof file to disk.");
 			return;
 		}
 
