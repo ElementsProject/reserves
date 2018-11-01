@@ -9,6 +9,7 @@ extern crate crypto;
 extern crate fern;
 extern crate hex;
 extern crate protobuf;
+extern crate secp256k1;
 
 use std::panic;
 use std::process;
@@ -63,6 +64,7 @@ fn main() {
 		.subcommand(cmd::inspect::subcommand())
 		.subcommand(cmd::drop::subcommand())
 		.subcommand(cmd::verify::subcommand())
+		.subcommand(cmd::add_utxo::subcommand())
 		.subcommand(cmd::fetch_utxos::subcommand())
 		.subcommand(cmd::add_proof::subcommand())
 		.subcommand(cmd::drop_utxos::subcommand())
@@ -86,6 +88,7 @@ fn main() {
 		("drop", _) => cmd::drop::execute(&mut ctx),
 		//("add-proof", Some(sub)) => cmd::add_proof::execute(&mut ctx, sub),
 		("verify", _) => cmd::verify::execute(&mut ctx),
+		("add-utxo", _) => cmd::add_utxo::execute(&mut ctx),
 		("fetch-utxos", _) => cmd::fetch_utxos::execute(&mut ctx),
 		("add-proof", _) => cmd::add_proof::execute(&mut ctx),
 		("drop-utxos", _) => cmd::drop_utxos::execute(&mut ctx),
