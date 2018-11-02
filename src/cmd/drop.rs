@@ -28,4 +28,6 @@ pub fn execute(ctx: &mut Ctx) {
 			proof_id
 		);
 	}
+
+	ctx.save_proof_file(pf);
 }
