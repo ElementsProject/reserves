@@ -38,7 +38,7 @@ pub fn execute(ctx: &mut context::Ctx) {
 	let mut total_amount = Amount::from_sat(0);
 	for mut proof in pf.proofs.iter() {
 		match pf.network {
-			Network::BITCOIN => {
+			Network::BITCOIN_MAINNET | Network::BITCOIN_TESTNET => {
 				let mut bitcoind = backend::bitcoind::Backend::load(ctx.command())
 					.expect("failed to load bitcoind");
 				let txouts = bitcoind.fetch_proof_prevouts(&proof, pf.block_number);

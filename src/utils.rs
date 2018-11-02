@@ -15,7 +15,8 @@ pub fn sha256(data: &[u8]) -> [u8; 32] {
 /// Human readable name for the networks.
 pub fn network_name(network: protos::Network) -> String {
 	match network {
-		protos::Network::BITCOIN => "BITCOIN",
+		protos::Network::BITCOIN_MAINNET => "BITCOIN_MAINNET",
+		protos::Network::BITCOIN_TESTNET => "BITCOIN_TESTNET",
 		protos::Network::LIQUID => "LIQUID",
 	}.into()
 }

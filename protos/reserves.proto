@@ -1,8 +1,9 @@
 syntax = "proto3";
 
 enum Network {
-	BITCOIN = 0;
-	LIQUID = 1;
+	BITCOIN_MAINNET = 0;
+	BITCOIN_TESTNET = 1;
+	LIQUID = 2;
 }
 
 message UTXO {

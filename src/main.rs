@@ -73,12 +73,10 @@ fn main() {
 		.subcommand(cmd::sign::subcommand())
 		.get_matches();
 
-	let mut ctx = context::Ctx {
-		matches: &matches,
-	};
+	let mut ctx = context::Ctx::new(&matches);
 
 	match ctx.verbosity() {
-		0 => setup_logger(log::LevelFilter::Warn),
+		0 => setup_logger(log::LevelFilter::Off),
 		1 => setup_logger(log::LevelFilter::Debug),
 		_ => setup_logger(log::LevelFilter::Trace),
 	}

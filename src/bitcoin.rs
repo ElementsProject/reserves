@@ -15,6 +15,18 @@ use common::*;
 use protos;
 use utils;
 
+/// Convert network into Bitcoin network.
+pub fn network(network: protos::Network) -> BitcoinNetwork {
+	match network {
+		protos::Network::BITCOIN_MAINNET => BitcoinNetwork::Bitcoin,
+		protos::Network::BITCOIN_TESTNET => BitcoinNetwork::Testnet,
+		_ => panic!(
+			"Network {} can't be used for Bitcoin transactions",
+			utils::network_name(network)
+		),
+	}
+}
+
 /// An internal type used to represent a transaction output with extra metadata.
 #[derive(Debug)]
 pub struct UTXO {

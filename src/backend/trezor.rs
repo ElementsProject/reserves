@@ -9,6 +9,7 @@ use rbitcoin::util::psbt;
 use rpassword;
 use trezor::{self, flows::SignTxProgress, Trezor, TrezorMessage, TrezorResponse};
 
+use bitcoin;
 use context::Ctx;
 
 pub fn args<'a>() -> Vec<clap::Arg<'a, 'a>> {
@@ -113,12 +114,19 @@ impl Backend {
 		ctx: &Ctx,
 		psbt: &mut psbt::PartiallySignedTransaction,
 	) -> Transaction {
+		let btc_network = bitcoin::network(ctx.network());
+
+		// Initiate the signing with Trezor.
+		let resp = self.0.sign_tx(psbt, btc_network).expect("Trezor error signing tx");
+
+		// Work through the signing flow and accumulate changes to the psbt and the signed tx.
 		let mut signed_tx = Vec::new();
-		//TODO(stevenroose) handle network
-		let resp = self.0.sign_tx(psbt, BitcoinNetwork::Testnet).expect("Trezor error signing tx");
-		tx_progress(psbt, handle_interaction(resp), BitcoinNetwork::Testnet, &mut signed_tx);
+		tx_progress(psbt, handle_interaction(resp), btc_network, &mut signed_tx);
+
+		// Parse the signed tx received from Trezor.
 		let mut signed: Transaction =
 			bitcoin_deserialize(&signed_tx).expect("created invalid signed tx with Trezor");
+
 		// Because the challenge input is not supported by Trezor, we tricked it into thinking it
 		// was a normal one.  Because of that, it signed the input.  We have to remove the signature
 		// because it's not valid there.
