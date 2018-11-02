@@ -6,7 +6,9 @@ use rbitcoin::blockdata::opcodes;
 use rbitcoin::blockdata::script::Builder;
 use rbitcoin::blockdata::transaction::{OutPoint, Transaction, TxIn, TxOut};
 use rbitcoin::consensus::encode::{deserialize, serialize};
-use rbitcoin::util::hash::Sha256dHash;
+use rbitcoin::network::constants::Network as BitcoinNetwork;
+use rbitcoin::util::address;
+use rbitcoin::util::hash::{Hash160, Sha256dHash};
 use rbitcoin::util::psbt;
 
 use common::*;
@@ -199,6 +201,12 @@ impl Proof {
 			total_amount += utxo.value().into_inner();
 		}
 
+		// Construct an unspentable output script.
+		let out_script = address::Address {
+			payload: address::Payload::PubkeyHash(Hash160::from_data(&[0])),
+			network: BitcoinNetwork::Testnet,
+		}.script_pubkey();
+
 		// Construct the tx and psbt tx.
 		let tx = Transaction {
 			version: 1,
@@ -206,7 +214,7 @@ impl Proof {
 			input: tx_inputs,
 			output: vec![TxOut {
 				value: total_amount as u64,
-				script_pubkey: Builder::new().push_opcode(opcodes::OP_FALSE).into_script(),
+				script_pubkey: out_script,
 			}],
 		};
 		let mut psbt = psbt::PartiallySignedTransaction::from_unsigned_tx(tx)
