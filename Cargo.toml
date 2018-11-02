@@ -12,6 +12,9 @@ protobuf = "2.0.4"
 hex = "0.3.2"
 rust-crypto = "0.2.36"
 
+trezor = { path = "/home/steven/code/rust/trezor-api" }
+rpassword = "2.0.0"
+
 bitcoin = { version = "0.14", features = [ "serde-decimal" ] }
 secp256k1 = "0.11"
 bitcoin-amount = { version = "0.1.4", features = [ "serde" ] }

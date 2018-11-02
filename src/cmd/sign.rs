@@ -6,19 +6,29 @@ use cmd::common;
 use common::*;
 use context;
 
+//TODO(stevenroose) Indicate which inputs should be signed; some signers don't really know.
+// Alternative would be to afterwards verify which inputs are validly signed and keep those,
+// discard others.
+
 /// Create the sign subcommand.
 pub fn subcommand<'a>() -> clap::App<'a, 'a> {
 	clap::SubCommand::with_name("sign")
 		.about("sign a proof")
 		.arg(common::id_arg())
 		.args(&backend::bitcoind::args())
+		.args(&backend::trezor::args())
 }
 
 /// Sign the tx with the active backend in the context.
 pub fn sign_proof(ctx: &mut context::Ctx, proof: &mut bitcoin::Proof) {
-	// currently only bitcoind
-	if let Some(mut bitcoind) = backend::bitcoind::Backend::load(ctx.command()) {
+	if let Some(mut trezor) = backend::trezor::Backend::load(ctx.command()) {
+		let signed = trezor.sign_tx(ctx, &mut proof.psbt.as_mut().unwrap());
+		//TODO(stevenroose) update psbt?
+		proof.proof_tx = Some(signed);
+		proof.status = Proof_Status::FINAL;
+	} else if let Some(mut bitcoind) = backend::bitcoind::Backend::load(ctx.command()) {
 		let signed = bitcoind.sign_tx(proof.psbt.clone().unwrap().global.unsigned_tx);
+		//TODO(stevenroose) update psbt?
 		proof.proof_tx = Some(signed);
 		proof.status = Proof_Status::FINAL;
 	} else {
@@ -44,6 +54,7 @@ pub fn execute(ctx: &mut context::Ctx) {
 	}
 
 	sign_proof(ctx, &mut proof);
+	println!("Successfully signed proof.");
 
 	pf.proofs.insert(0, proof);
 	ctx.save_proof_file(pf);

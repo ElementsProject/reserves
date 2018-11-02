@@ -9,7 +9,9 @@ extern crate crypto;
 extern crate fern;
 extern crate hex;
 extern crate protobuf;
+extern crate rpassword;
 extern crate secp256k1;
+extern crate trezor;
 
 use std::panic;
 use std::process;
