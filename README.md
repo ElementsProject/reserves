@@ -66,14 +66,22 @@ ommitted) with the given challenge and block number.
 $ reserves inspect -f reserves.proof
 ```
 
-### add-utxos: add UTXOs to a proof
+### fetch-utxos: add UTXOs to a proof
 
-Add UTXOs to a proof using one of the provided sources.  Currently the only
+Fetch UTXOs from a wallet source and add them to a proof.  Currently the only
 available source is the Bitcoin Core wallet.
 
 ```
 $ reserves add-utxos --bitcoind http://localhost:8332 \
 	--bitcoind-user rpcuser --bitcoind-pass rpcpass
+```
+
+### add-utxo: manually add a UTXO to a proof
+
+```
+$ reserves add-utxo c5bdb27907b78ce03f94e4bf2e94f7a39697b9074b79470019e3dbc76a10ecb6:0 \
+	--hd-keypath "m/0'/0'/0'" \
+	--previous-tx 020000000001011eb5a3e65946f88b00d67b321e5fd980b32a2316fb1fc9b712baa6a1033a04e30100000017160014f0f81ee77d552b4c81497451d1abf5c22ce8e352feffffff02b55dd900000000001976a9142c3cf5686f47c1de9cc90b4255cc2a1ef8c01b3188acfb0391ae6800000017a914a3a79e37ad366d9bf9471b28a9a8f64b50de0c968702483045022100c0aa7b262967fc2803c8a9f38f26682edba7cafb7d4870ebdc116040ad5338b502205dfebd08e993af2e6aa3118a438ad70ed9f6e09bc6abfd21f8f2957af936bc070121031f4e69fcf110bb31f019321834c0948b5487f2782489f370f66dc20f7ac767ca8bf81500
 ```
 
 ### sign: sign a proof
@@ -84,6 +92,9 @@ transaction.  Currently the only supported wallet for signing is Bitcoin Core.
 ```
 $ reserves sign --bitcoind http://localhost:8332 \
 	--bitcoind-user rpcuser --bitcoind-pass rpcpass
+```
+```
+$ reserves sign --trezor --id cold-storage
 ```
 
 ### verify: verify a proof
