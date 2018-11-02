@@ -229,7 +229,8 @@ impl Proof {
 	/// Return all the outpoins this proof is spending.
 	pub fn spending_utxos(&self) -> HashSet<OutPoint> {
 		let mut set = HashSet::new();
-		for input in self.proof_tx.as_ref().unwrap().input.iter() {
+		// Skip the challenge UTXO.
+		for input in self.proof_tx.as_ref().unwrap().input.iter().skip(1) {
 			if !set.insert(input.previous_output) {
 				panic!("Proof '{}' is spending UTXO {} twice!", self.id, input.previous_output);
 			}
@@ -237,7 +238,7 @@ impl Proof {
 		set
 	}
 
-	pub fn verify(&self, challenge: &str, prevouts: Vec<TxOut>) {
+	pub fn verify(&self, challenge: &str, prevouts: Vec<TxOut>) -> Amount {
 		let tx = self.proof_tx.as_ref().expect("proof in wrong state");
 		// Proof tx must have exactly 1 output and more than 1 inputs.
 		if tx.output.len() != 1 {
@@ -291,6 +292,6 @@ impl Proof {
 			);
 		}
 
-		println!("Successfully verified proof '{}' for {} satoshis.", self.id, total_amount);
+		Amount::from_sat(total_amount as i64)
 	}
 }
