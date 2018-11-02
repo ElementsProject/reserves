@@ -7,7 +7,7 @@ use rbitcoin::consensus::encode::deserialize as bitcoin_deserialize;
 use rbitcoin::network::constants::Network as BitcoinNetwork;
 use rbitcoin::util::psbt;
 use rpassword;
-use trezor::{self, SignTxProgress, Trezor, TrezorMessage, TrezorResponse};
+use trezor::{self, flows::SignTxProgress, Trezor, TrezorMessage, TrezorResponse};
 
 use context::Ctx;
 
@@ -53,12 +53,7 @@ fn tx_progress(
 	network: BitcoinNetwork,
 	signed_tx_buf: &mut Vec<u8>,
 ) {
-	// Only add signatures to the PSBT if it's not the challenge input.
-	if let Some((idx, sig)) = progress.get_signature() {
-		if idx != 0 {
-			progress.apply_signature(psbt).expect("Trezor error");
-		}
-	}
+	// If the device provided a part of the serialized signed tx, write it to the buffer.
 	if let Some(signed_tx_part) = progress.get_serialized_tx_part() {
 		signed_tx_buf.write(signed_tx_part).unwrap();
 	}
