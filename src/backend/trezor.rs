@@ -84,6 +84,8 @@ fn tx_progress(
 			// This is the most important part. By setting the script type to SPENDWITNESS,
 			// Trezor will assume that the value of the input will be confirmed when signing.
 			data_input.set_script_type(trezor::protos::InputScriptType::SPENDWITNESS);
+			//TODO(stevenroose) replace this with EXTERNAL once it works:
+			// https://github.com/trezor/trezor-core/issues/388
 
 			let mut txdata = trezor::protos::TxAck_TransactionType::new();
 			txdata.mut_inputs().push(data_input);

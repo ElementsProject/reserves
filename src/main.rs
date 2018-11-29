@@ -3,7 +3,7 @@ extern crate bitcoin as rbitcoin;
 extern crate log;
 extern crate bitcoin_amount;
 extern crate bitcoinconsensus;
-extern crate bitcoindrpc;
+extern crate bitcoincore_rpc;
 extern crate clap;
 extern crate crypto;
 extern crate fern;

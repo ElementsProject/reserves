@@ -1,11 +1,13 @@
-use bitcoindrpc as rpc;
+use bitcoincore_rpc as rpc;
+use bitcoincore_rpc::GetTransaction;
+use bitcoincore_rpc::Queryable;
 use clap;
 use rbitcoin::blockdata::opcodes;
 use rbitcoin::blockdata::script::Builder;
-use rbitcoin::blockdata::transaction::{OutPoint, Transaction, TxOut};
 use rbitcoin::consensus::encode::serialize;
 use rbitcoin::util::hash::BitcoinHash;
 use rbitcoin::util::psbt;
+use rbitcoin::{Block, OutPoint, Transaction, TxOut};
 
 use bitcoin::*;
 
@@ -52,7 +54,7 @@ impl Backend {
 
 		let unspents = self
 			.0
-			.listunspent(Some(6), None, None, None, None)
+			.list_unspent(Some(6), None, None, None, None)
 			.expect("failed to fetch utxos from bitcoind");
 		for unspent in unspents.into_iter() {
 			if !unspent.spendable {
@@ -62,11 +64,11 @@ impl Backend {
 			// Fetch tx and block info.
 			let tx_info = self
 				.0
-				.getrawtransaction_verbose(unspent.txid, None)
+				.get_raw_transaction_verbose(&unspent.txid, None)
 				.expect("error retrieving raw tx from bitcoind");
 			let block_info = self
 				.0
-				.getblockheader_verbose(tx_info.blockhash)
+				.get_block_header_verbose(&tx_info.blockhash)
 				.expect("error loading block header from bitcoind");
 
 			let tx = tx_info.transaction().expect(&format!("failed to decode tx {}", unspent.txid));
@@ -97,17 +99,20 @@ impl Backend {
 
 		// Construct fictive challenge UTXO to pass to signer.
 		let challenge_txin = &tx.input[0];
-		let challenge_utxo = rpc::UTXO {
-			txid: challenge_txin.previous_output.txid,
+		let challenge_utxo = rpc::json::UTXO {
+			txid: &challenge_txin.previous_output.txid,
 			vout: challenge_txin.previous_output.vout,
-			script_pub_key: Builder::new().push_opcode(opcodes::OP_TRUE).into_script(),
-			redeem_script: Builder::new().into_script(),
+			script_pub_key: &Builder::new().push_opcode(opcodes::OP_TRUE).into_script(),
+			redeem_script: &Builder::new().into_script(),
 		};
 
 		let signed_res = self
 			.0
-			.signrawtransactionwithwallet(&raw_tx, Some(vec![challenge_utxo]), None)
-			.expect("error calling signrawtransaction");
+			.sign_raw_transaction_with_wallet(
+				raw_tx.as_slice().into(),
+				Some(&[challenge_utxo]),
+				None,
+			).expect("error calling signrawtransaction");
 		if !signed_res.errors.is_empty() {
 			for e in signed_res.errors.iter() {
 				println!("signing error for input {}: {}", e.vout, e.error);
@@ -136,7 +141,7 @@ impl Backend {
 			// Check if the output is unspent.
 			let unspent = self
 				.0
-				.gettxout(input.previous_output.txid, input.previous_output.vout, Some(false))
+				.get_tx_out(&input.previous_output.txid, input.previous_output.vout, Some(false))
 				.expect(&format!(
 					"fetch txout {} (input #{} of proof '{}')",
 					input.previous_output, idx, proof.id,
@@ -145,14 +150,14 @@ impl Backend {
 				// Verify the block number.
 				let block_hash = self
 					.0
-					.getrawtransaction_verbose(input.previous_output.txid, None)
+					.get_raw_transaction_verbose(&input.previous_output.txid, None)
 					.expect(&format!(
 						"error fetching transaction details for txid {} for proof '{}'",
 						input.previous_output.txid, proof.id
 					)).blockhash;
 				let block_number = self
 					.0
-					.getblockheader_verbose(block_hash)
+					.get_block_header_verbose(&block_hash)
 					.expect(&format!("fetching block header for {}", unspent.bestblock))
 					.height as u32;
 				if block_number > proof_block_number {
@@ -181,16 +186,13 @@ impl Backend {
 				let mut block_hash = existing.block_hash;
 				// Get block hash from number.
 				if existing.block_hash.is_none() && existing.block_number != 0 {
-					block_hash = Some(self.0.getblockhash(existing.block_number).expect(&format!(
-						"fetching block hash for block number {}",
-						existing.block_number
-					)));
+					block_hash = Some(self.0.get_block_hash(existing.block_number).expect(
+						&format!("fetching block hash for block number {}", existing.block_number),
+					));
 				}
 
 				if let Some(block_hash) = block_hash {
-					let block = self
-						.0
-						.getblock_raw(block_hash)
+					let block = Block::query(&mut self.0, &block_hash)
 						.expect(&format!("fetching block number {}", existing.block_number));
 					let found = block
 						.txdata
