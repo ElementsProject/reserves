@@ -7,7 +7,7 @@ use rbitcoin::consensus::encode::deserialize as bitcoin_deserialize;
 use rbitcoin::network::constants::Network as BitcoinNetwork;
 use rbitcoin::util::psbt;
 use rpassword;
-use trezor::{self, flows::SignTxProgress, Trezor, TrezorMessage, TrezorResponse};
+use trezor::{self, SignTxProgress, Trezor, TrezorMessage, TrezorResponse};
 
 use bitcoin;
 use context::Ctx;
@@ -44,6 +44,10 @@ fn handle_interaction<T, R: TrezorMessage>(resp: TrezorResponse<T, R>) -> T {
 				let pass = rpassword::prompt_password_stdout("Enter passphrase: ").unwrap();
 				handle_interaction(req.ack_passphrase(pass).expect("Trezor error"))
 			}
+		}
+		TrezorResponse::PassphraseStateRequest(req) => {
+			debug!("Passphrase state received: {:?}", req.passphrase_state());
+			handle_interaction(req.ack().expect("Trezor error"))
 		}
 	}
 }

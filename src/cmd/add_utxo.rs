@@ -98,11 +98,11 @@ pub fn execute(ctx: &mut context::Ctx) {
 					let mut map = HashMap::new();
 					let path =
 						bip32::parse_derivation_path(&p).expect("failed to parse HD keypath");
-					let secp = secp256k1::Secp256k1::signing_only();
 					let mut bytes = vec![0; secp256k1::constants::SECRET_KEY_SIZE];
 					bytes[0] = 1;
 					let empty_privkey =
-						secp256k1::key::SecretKey::from_slice(&secp, &bytes).unwrap();
+						secp256k1::key::SecretKey::from_slice(&bytes).unwrap();
+					let secp = secp256k1::Secp256k1::signing_only();
 					let pubkey = secp256k1::key::PublicKey::from_secret_key(&secp, &empty_privkey);
 					map.insert(pubkey, (Default::default(), path));
 					map

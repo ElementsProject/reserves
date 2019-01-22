@@ -1,5 +1,6 @@
 use bitcoincore_rpc as rpc;
 use bitcoincore_rpc::GetTransaction;
+use bitcoincore_rpc::GetScript;
 use bitcoincore_rpc::Queryable;
 use clap;
 use rbitcoin::blockdata::opcodes;
@@ -186,7 +187,7 @@ impl Backend {
 				let mut block_hash = existing.block_hash;
 				// Get block hash from number.
 				if existing.block_hash.is_none() && existing.block_number != 0 {
-					block_hash = Some(self.0.get_block_hash(existing.block_number).expect(
+					block_hash = Some(self.0.get_block_hash(existing.block_number.into()).expect(
 						&format!("fetching block hash for block number {}", existing.block_number),
 					));
 				}
