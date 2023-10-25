@@ -1,0 +1,14 @@
+import hashlib
+
+account_code = "8dc20f34da8cea8dd0f46b001694f5123ecd30d786c5eb92ad1a013703a4f8d1"
+iiban = "AB12C34DEFG5KSQI"
+audit_id = "PR30JUN22"
+record_id = hashlib.sha256((account_code + iiban + audit_id).encode('utf-8')).hexdigest()
+
+balances = "ADA:15129.4,ADA.S:0.0,BTC:0.2600852178,BTC.M:1.25,DOT:50.0,DOT.S:20.5,DOT.P:0.0,ETH:5.27518778,ETH2.S:10.123,USDC:50000.0,USDT:0.0,XRP:0.000002"
+
+print("Record ID: {}".format(record_id))
+print("Merkle Hash: {}".format((record_id + "," + balances)))
+hash_result = hashlib.sha256((record_id + "," + balances).encode('utf-8')).hexdigest()
+print("SHA Result: {}".format(hash_result))
+print("Merkle Leaf: {}".format(hash_result[0:16]))
